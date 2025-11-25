@@ -1,0 +1,22 @@
+//Download and add Google signing key
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
+//Add Google Chrome repository
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+sudo apt update
+sudo apt install google-chrome-stable -y
+google-chrome --version
+
+CHROME_VERSION=$(google-chrome --version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+//Fetch the matching ChromeDriver version using the new API
+LATEST=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_$CHROME_VERSION")
+//Build the correct download URL
+DRIVER_URL="https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$LATEST/linux64/chromedriver-linux64.zip"
+//Download and extract
+wget "$DRIVER_URL" -O chromedriver-linux64.zip
+unzip chromedriver-linux64.zip
+sudo mv chromedriver-linux64/chromedriver /usr/local/bin/
+sudo chmod +x /usr/local/bin/chromedriver
+
+COMMANDS
+ javac -d bin -cp ".:lib/*" Main.java
+java -cp "bin:lib/*" Main
